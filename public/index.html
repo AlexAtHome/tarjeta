@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tarjeta</title>
+	<base href="/">
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+	<header>
+		<div id="unauth" hidden>
+			<a href="login.html">Log in</a>
+		</div>
+		<div id="auth" hidden>
+			<span id="username"></span>
+			<a href="profile.html">See profile</a>
+			<form method="post" action="/api/v0/logout">
+				<button>Log out</button>
+			</form>
+		</div>
+	</header>
+	<h1>Hello world!</h1>
+
+	<script>
+		const cookies = new Map(document.cookie.split(";").map(record => record.split('=')))
+		document.getElementById('username').innerText = cookies.get('user')
+		const hasUsername = cookies.has('user')
+		document.getElementById('auth').hidden = !hasUsername
+		document.getElementById('unauth').hidden = hasUsername
+	</script>
+</body>
+
+</html>

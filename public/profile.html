@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<base href="/">
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+	<header>
+		<form method="post" action="/api/v0/logout">
+			<button>Log out</button>
+		</form>
+	</header>
+	<h1>Welcome back, <span id="username">someone</span>!</h1>
+
+	<script>
+		const cookies = new Map(document.cookie.split(";").map(record => record.split('=')))
+		document.getElementById('username').innerText = cookies.get('user')
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+body {
+	background-color: #252525;
+	color: #fafafa;
+	font-family: Rubik, sans-sefif;
+}
+
+[hidden] {
+	display: none !important;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+
+.form-control {
+	display: flex;
+	gap: 5px;
+	flex-direction: column;
+	max-width: 300px;
+}
+
+.form-control label {
+	display: block;
+}
+
+#auth,
+#unauth {
+	display: flex;
+	gap: 10px;
+}
