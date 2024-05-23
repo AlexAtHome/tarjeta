@@ -7,6 +7,7 @@
 	<title>Tarjeta</title>
 	<base href="/">
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="preload" href="main.js" as="script">
 </head>
 
 <body>
@@ -24,12 +25,12 @@
 	</header>
 	<h1>Hello world!</h1>
 
-	<script>
-		const cookies = new Map(document.cookie.split(";").map(record => record.split('=')))
-		document.getElementById('username').innerText = cookies.get('user')
-		const hasUsername = cookies.has('user')
-		document.getElementById('auth').hidden = !hasUsername
-		document.getElementById('unauth').hidden = hasUsername
+	<script type="module">
+		import {getUser} from '/main.js'
+
+		const hasUser = !!getUser()?.sub
+		document.getElementById('auth').hidden = !hasUser
+		document.getElementById('unauth').hidden = hasUser
 	</script>
 </body>
 

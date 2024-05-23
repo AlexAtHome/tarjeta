@@ -7,6 +7,7 @@
 	<title>Document</title>
 	<base href="/">
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="preload" href="main.js" as="script">
 </head>
 
 <body>
@@ -17,9 +18,9 @@
 	</header>
 	<h1>Welcome back, <span id="username">someone</span>!</h1>
 
-	<script>
-		const cookies = new Map(document.cookie.split(";").map(record => record.split('=')))
-		document.getElementById('username').innerText = cookies.get('user')
+	<script type="module">
+		import {getUser} from '/main.js'
+		document.getElementById('username').innerText = getUser().sub
 	</script>
 </body>
 

@@ -1,7 +1,9 @@
 package auth
 
 import (
+	"log"
 	"net/http"
+	"tarjeta/jwt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,9 +23,8 @@ func constructCookie(key string, value string, secure bool) (cookie *fiber.Cooki
 	cookie.SessionOnly = true
 	cookie.Path = "/"
 	cookie.Secure = secure
-	cookie.HTTPOnly = true
+	cookie.HTTPOnly = false
 	cookie.SameSite = "lax"
-
 	return cookie
 }
 
@@ -31,26 +32,26 @@ func constructCookie(key string, value string, secure bool) (cookie *fiber.Cooki
 func Login(ctx *fiber.Ctx) error {
 	p := new(LoginDetails)
 	if err := ctx.BodyParser(p); err != nil {
-		return ctx.Status(http.StatusBadRequest).SendString(string("An error occured!"))
+		log.Print(err)
+		return ctx.Status(http.StatusBadRequest).SendString("An error occured!")
 	}
-
 	// TODO: Add database
 	if p.Username != "alex" && p.Password != "qwerty123$!" {
-		return ctx.Status(http.StatusUnauthorized).SendString(string("Wrong credentials"))
+		return ctx.Status(http.StatusUnauthorized).SendString("Wrong credentials")
 	}
-
-	session := constructCookie("ses", "a51da2e0-31a7-40e5-a102-490c4b8647eb", true)
-	user := constructCookie("user", p.Username, true)
-	user.HTTPOnly = false
+	token, err := jwt.EncryptJWT(p.Username)
+	if err != nil {
+		log.Print(err)
+		return ctx.Status(http.StatusInternalServerError).SendString("Internal Server Error")
+	}
+	session := constructCookie("jwt", token.String(), true)
 	ctx.Cookie(session)
-	ctx.Cookie(user)
-
 	return ctx.Redirect("/profile.html", http.StatusMovedPermanently)
 }
 
 // POST
 func Logout(ctx *fiber.Ctx) error {
-	session := constructCookie("ses", "", true)
+	session := constructCookie("jwt", "", true)
 	session.SessionOnly = false
 	session.Expires = time.Now().Add(-(time.Hour * 2))
 	user := constructCookie("user", "", false)
