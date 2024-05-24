@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"time"
+	"strings"
 )
 
 // TODO: Move to an environment variable
@@ -32,10 +33,21 @@ type Token struct {
 	header    string
 	payload   string
 	signature string
+	encoder *base64.Encoder
 }
 
 func (t Token) String() string {
 	return t.header + "." + t.payload + "." + t.signature
+}
+
+func (t *Token) IsValid() bool {
+	sigHashSum, err := t.encoder.DecodeString(t.signature)
+	if err != nil {
+		return false
+	}
+	sig := string(sigHashSum)
+	// TODO: use hmac sha256 to validate the unpacked signsture
+	
 }
 
 func EncryptJWT(subjectName string) (*Token, error) {
@@ -52,8 +64,8 @@ func EncryptJWT(subjectName string) (*Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	encoder := base64.URLEncoding.WithPadding(base64.NoPadding)
 
+	encoder := base64.URLEncoding.WithPadding(base64.NoPadding)
 	headerBase64 := encoder.EncodeToString(headerBytes)
 	payloadBase64 := encoder.EncodeToString(payloadBytes)
 	signatureHash := hmac.New(sha256.New, []byte(SECRET))
@@ -61,7 +73,24 @@ func EncryptJWT(subjectName string) (*Token, error) {
 
 	signature := encoder.EncodeToString(signatureHash.Sum(nil))
 
-	token := &Token{header, user, headerBase64, payloadBase64, signature}
+	token := &Token{header, user, headerBase64, payloadBase64, signature, &encoder}
 
+	return token, nil
+}
+
+func DecryptJWT(token string) (*Token, error) {
+	parts := strings.split(token, ".")
+	token := &Token{nil, nil, parts[0], parts[1], parts[2], encoder}
+	encoder := base64.URLEncoding.WithPadding(base64.NoPadding)
+	headerJson := token.encoder.DecodeString(token.header)
+	payloadJson := token.encoder.DecodeString(token.payload)
+	err := json.Unmarshal(token.header, token.Header)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(token.payload, token.Payload)
+	if err != nil {
+		return nil, err
+	}
 	return token, nil
 }
