@@ -7,7 +7,6 @@
 	<title>Tarjeta</title>
 	<base href="/">
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<link rel="preload" href="main.js" as="script">
 </head>
 
 <body>
@@ -16,8 +15,10 @@
 			<a href="login.html">Log in</a>
 		</div>
 		<div id="auth" hidden>
-			<span id="username"></span>
-			<a href="profile.html">See profile</a>
+			<img class="pfp pfp_small" src="" alt="Profile Picture" loading="lazy" id="pfp">
+			<a href="profile.html" id="profile-link">
+				<span id="username"></span>
+			</a>
 			<form method="post" action="/api/v0/logout">
 				<button>Log out</button>
 			</form>
@@ -26,11 +27,18 @@
 	<h1>Hello world!</h1>
 
 	<script type="module">
-		import {getUser} from '/main.js'
+		import {whoami} from '/main.js'
 
-		const hasUser = !!getUser()?.sub
-		document.getElementById('auth').hidden = !hasUser
-		document.getElementById('unauth').hidden = hasUser
+		try {
+			const user = await whoami()
+			document.getElementById('username').innerText = user.name
+			document.getElementById('pfp').src = user.profilePicture
+			document.getElementById('auth').hidden = false
+			document.getElementById('unauth').hidden = true
+		} catch {
+			document.getElementById('auth').hidden = true
+			document.getElementById('unauth').hidden = false
+		}
 	</script>
 </body>
 

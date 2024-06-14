@@ -30,3 +30,22 @@ body {
 	display: flex;
 	gap: 10px;
 }
+
+.pfp {
+	border-radius: 12rem;
+	width: 6rem;
+	aspect-ratio: 1 / 1;
+}
+
+.pfp_small {
+	width: 2rem;
+}
+
+#profile-link {
+	color: inherit;
+}
+
+#auth {
+	display: flex;
+	align-items: center;
+}

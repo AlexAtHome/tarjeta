@@ -14,6 +14,7 @@ func main() {
 	})
 	app.Post("/api/v0/auth", auth.Login)
 	app.Post("/api/v0/logout", auth.Logout)
+	app.Get("/api/v0/whoami", auth.WhoAmI)
 	app.Static("/", "./public")
 
 	app.Listen(":3000")

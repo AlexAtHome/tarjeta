@@ -7,7 +7,6 @@
 	<title>Document</title>
 	<base href="/">
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<link rel="preload" href="main.js" as="script">
 </head>
 
 <body>
@@ -17,10 +16,25 @@
 		</form>
 	</header>
 	<h1>Welcome back, <span id="username">someone</span>!</h1>
+	<img class="pfp" src="" alt="Profile Picture" loading="lazy" id="pfp">
+
+	<dl>
+		<dt>UUID</dt>
+		<dd id="uuid"></dd>
+		<dt>Email</dt>
+		<dd id="email"></dd>
+		<dt>Role</dt>
+		<dd id="role"></dd>
+	</dl>
 
 	<script type="module">
-		import {getUser} from '/main.js'
-		document.getElementById('username').innerText = getUser().sub
+		import {whoami} from '/main.js'
+		const user = await whoami()
+		document.getElementById('username').innerText = user.name
+		document.getElementById('pfp').src = user.profilePicture
+		document.getElementById('uuid').innerText = user.uuid
+		document.getElementById('email').innerText = user.email
+		document.getElementById('role').innerText = user.role
 	</script>
 </body>
 
